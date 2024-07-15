@@ -25,23 +25,17 @@
  *  
  ********************************************************************************/
 
-// This example demonstrates how HomeSpan can control both a remote ESP32 and a remote ESP8266 via SpanPoint.
+// 此示例演示了 HomeSpan 如何通过 SpanPoint 控制远程 ESP32 和远程 ESP8266。
 //
-// The sketch below represent the Central Hub that is connected to HomeKit.  It is basically the same
-// as Tutorial Example 5 that implements control for two LEDs.  However, instead of this sketch turning on/off
-// LEDs that are connected to pins on the device, HomeSpan will use SpanPoint to transmit an on/off instruction
-// to an ESP32 and/or an ESP8266.  When either of those devices receives the on/off instruction, it will turn on/off
-// an LED accordingly.
+// 下面的草图表示连接到 HomeKit 的中央集线器。它与实现两个 LED 控制的教程示例 5 基本相同。但是，此草图不会打开/关闭连接到设备引脚的 LED，
+// 而是 HomeSpan 将使用 SpanPoint 向 ESP32 和/或 ESP8266 传输开/关指令。当这两个设备中的任何一个收到开/关指令时，它将相应地打开/关闭 LED。
 
-// Though we only need to transmit instructions from the Central Hub to the two remote devices, this sketch is configured
-// for both sending and receiving data from the remote devices to help demonstrate the method.  Even if you don't need
-// the remote devices to transmit anything to the Central Hub, having a periodic heartbeat transmission is a good way
-// of ensuring things are all working.  Also, if the remote ESP32 periodically transmits data to the Central Hub, SpanPoint
-// will automatically calibrate the WiFi channel to ensure tranmission succeeds.
+// 虽然我们只需要将指令从中央集线器传输到两个远程设备，但此草图配置为从远程设备发送和接收数据，以帮助演示该方法。即使您不需要远程设备向中央
+// 集线器传输任何内容，定期进行心跳传输也是确保一切正常运转的好方法。此外，如果远程 ESP32 定期将数据传输到中央集线器，SpanPoint 将自动校准 
+// WiFi 信道以确保传输成功。
 
-// Since SpanPoint only runs on an ESP32, we will be using the underlying ESP-NOW functions for the ESP8266 sketch.  In that
-// sketch you'll note that there is no automatic calibration and the WiFi channel instead needs to be manually specified to match
-// whatever channel the Central Hub uses once it is connected to your Home Network.
+// 由于 SpanPoint 仅在 ESP32 上运行，我们将使用 ESP8266 草图的底层 ESP-NOW 功能。在该草图中，您会注意到没有自动校准，而是需要手动指定
+// WiFi 信道以匹配中央集线器连接到家庭网络后使用的任何信道。
 
 #include "HomeSpan.h"
 
@@ -49,16 +43,16 @@
 
 struct RemoteLight : Service::LightBulb {
 
-  Characteristic::On power;             // this Characteristic determines if power to LED is on or off
-  SpanPoint *remoteDevice;              // this is the SpanPoint connection used to transmit/receive data from the remote devices
+  Characteristic::On power;             // 此特性决定 LED 电源是打开还是关闭
+  SpanPoint *remoteDevice;              // 这是用于从远程设备传输/接收数据的 SpanPoint 连接
   
-  RemoteLight(const char *macAddress, boolean isESP8266) : Service::LightBulb(){        // the contructor takes two arguments - the MAC Address of the remote device, and a flag is remote device is ESP8266
+  RemoteLight(const char *macAddress, boolean isESP8266) : Service::LightBulb(){        // 构造函数有两个参数 - 远程设备的 MAC 地址，以及远程设备是否为 ESP8266 的标志
 
-    // Here we create the SpanPoint control using the MAC Address of the remote device:
-    // the send size is set to the size of a boolean, since we will be transmitting nothing but a 1 or 0 to request power to be turned on or off to the remote LED;
-    // the receive size is set to the size of an int - this will allow us to accept an arbitrary "ID" as part of a heartbeat message from each device to keep tabs on its status;
-    // the queue-depth is set to 1; and
-    // the last argument controls whether SpanPoint will listen for incoming data on its STA MAC Address (false), or its AP MAC Address (true), which is need when receiving data from an ESP8266
+    // 在这里，我们使用远程设备的 MAC 地址创建 SpanPoint 控件：
+    // 发送大小设置为布尔值的大小，因为我们将只传输 1 或 0 来请求打开或关闭远程 LED 的电源；
+    // 接收大小设置为 int 的大小 - 这将允许我们接受任意“ID”作为来自每个设备的心跳消息的一部分，以密切关注其状态；
+    // 队列深度设置为 1；并且
+    // 最后一个参数控制 SpanPoint 是否在其 STA MAC 地址（false）或其 AP MAC 地址（true）上侦听传入数据，这是从 ESP8266 接收数据时需要的
     
     remoteDevice=new SpanPoint(macAddress,sizeof(boolean),sizeof(int),1,isESP8266);
   }
@@ -73,7 +67,7 @@ struct RemoteLight : Service::LightBulb {
     return(true);
   }
 
-  void loop(){          // this loop is optional -- it allows for the sketch to scan for any incoming 4-byte (int) messages from either of the remote devices
+  void loop(){          // 此循环是可选的——它允许草图扫描来自任一远程设备的任何传入 4 字节（int）消息
 
     int id;
     if(remoteDevice->get(&id))
@@ -98,13 +92,13 @@ void setup() {
     new Service::AccessoryInformation(); 
       new Characteristic::Identify();
       new Characteristic::Name("Remote ESP32");               
-    new RemoteLight("84:CC:A8:11:B4:84",false);           // this is the MAC Address of a remote ESP32 device running SpanPoint
+    new RemoteLight("84:CC:A8:11:B4:84",false);           // 这是运行 SpanPoint 的远程 ESP32 设备的 MAC 地址
 
   new SpanAccessory();  
     new Service::AccessoryInformation(); 
       new Characteristic::Identify();
       new Characteristic::Name("Remote ESP8266");               
-    new RemoteLight("BC:FF:4D:40:8E:71",true);           // this is the MAC Address of a remote ESP8266 device running ESP-NOW functions (note second argument is true)
+    new RemoteLight("BC:FF:4D:40:8E:71",true);           // 这是运行 ESP-NOW 功能的远程 ESP8266 设备的 MAC 地址（注意第二个参数为 true）
 }
 
 //////////////////////////////////////
