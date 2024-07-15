@@ -26,11 +26,11 @@
  *  
  ********************************************************************************/
  
-// This is the sketch for a remote ESP32 device.  The sketch uses SpanPoint to receive and transmit data to the Main Device (the CENTRAL HUB)
+// 这是远程 ESP32 设备的草图。该草图使用 SpanPoint 接收数据并将其传输到主设备（中央集线器）
 
 #include "HomeSpan.h"
 
-#define MAIN_DEVICE_MAC       "AC:67:B2:77:42:20"           // use the corresponding "Local MAC Address" listed under SpanPoint section when typing 'i' into the Serial Monitor ON THE CENTRAL HUB SKETCH
+#define MAIN_DEVICE_MAC       "AC:67:B2:77:42:20"           // 在中央集线器草图上的串行监视器中输入“i”时，使用 SpanPoint 部分下列出的相应“本地 MAC 地址”
 #define LED_PIN               13
 #define CALIBRATION_PERIOD    60
 #define INTERNAL_ID           32
