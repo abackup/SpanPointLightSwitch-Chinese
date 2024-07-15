@@ -12,7 +12,7 @@ SpanPointLightSwitch 是一个工作示例，展示了如何使用 HomeSpan 的 
 
 本示例包含三个草图：
 
-* **CentralHub.ino**：一个完整​​的 HomeSpan 草图，实现了两个 HomeKit LightBulb 配件，但它不是连接连接到设备引脚的两个 LED，而是使用 HomeSpan 的 **SpanPoint** 类将开/关指令传输到远程 ESP32 和远程 ESP8266 设备，每个设备控制自己的 LED
+* [**CentralHub.ino**](CentralHub/CentralHub.ino)：一个完整​​的 HomeSpan 草图，实现了两个 HomeKit LightBulb 配件，但它不是连接连接到设备引脚的两个 LED，而是使用 HomeSpan 的 **SpanPoint** 类将开/关指令传输到远程 ESP32 和远程 ESP8266 设备，每个设备控制自己的 LED
 
 * **RemoteLight32.ino**：一个轻量级的 HomeSpan 草图，不连接完全不与 HomeKit 通信，但仍使用 **SpanPoint** 接收来自中央集线器的消息，请求打开或关闭板载 LED
 
